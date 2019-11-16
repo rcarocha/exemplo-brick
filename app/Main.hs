@@ -11,84 +11,27 @@ import qualified Data.Text as T
 import qualified Graphics.Vty as V
 
 import qualified Brick.Main as M
-import Brick.Util (fg, on)
 import qualified Brick.AttrMap as A
+
+import Brick.Util (fg, on)
 import Brick.Types
   ( Widget
   )
 import Brick.Widgets.Core
-  ( (<=>)
-  , (<+>)
-  , withAttr
-  , vLimit
-  , hLimit
-  , hBox   -- cria uma caixa
-  , updateAttrMap
-  , withBorderStyle  -- constroi o estilo de borda
-  , txt  -- campo de texto
-  , str  -- string para ser colocada no Widget
+  ( (<=>)            -- (layout vertical de caixas) coloca os Widgets alinhados verticalmente 
+  , (<+>)            -- (layout horizontal de caixas) coloca os Widgets alinhados horizontalmente 
+  , vLimit           -- limitam o espaco vertical de um Widget
+  , hLimit           -- limitam o espaco horizontal de um Widget
+  , hBox             -- layout de caixa horizontal (agrupamento horizontal de listas de Widgets)
+  , withBorderStyle  -- constroi o estilo de borda de caixa de texto
+  , txt              -- campo de texto
+  , str              -- cria string para ser colocada no Widget
   )
+
 import qualified Brick.Widgets.Center as C
 import qualified Brick.Widgets.Border as B
 import qualified Brick.Widgets.Border.Style as BS
 
-styles :: [(T.Text, BS.BorderStyle)]
-styles =
-    [ ("ascii", BS.ascii)
-    , ("unicode", BS.unicode)
-    , ("unicode bold", BS.unicodeBold)
-    , ("unicode rounded", BS.unicodeRounded)
-    , ("custom", custom)
-    , ("from 'x'", BS.borderStyleFromChar 'x')
-    ]
-
-custom :: BS.BorderStyle
-custom =
-    BS.BorderStyle { BS.bsCornerTL = '/'
-                   , BS.bsCornerTR = '\\'
-                   , BS.bsCornerBR = '/'
-                   , BS.bsCornerBL = '\\'
-                   , BS.bsIntersectFull = '.'
-                   , BS.bsIntersectL = '.'
-                   , BS.bsIntersectR = '.'
-                   , BS.bsIntersectT = '.'
-                   , BS.bsIntersectB = '.'
-                   , BS.bsHorizontal = '*'
-                   , BS.bsVertical = '!'
-                   }
-
-borderDemos :: [Widget ()]
-borderDemos = mkBorderDemo <$> styles
-
-mkBorderDemo :: (T.Text, BS.BorderStyle) -> Widget ()
-mkBorderDemo (styleName, sty) =
-    withBorderStyle sty $
-    B.borderWithLabel (str "label") $
-    vLimit 5 $
-    C.vCenter $
-    txt $ "  " <> styleName <> " style  "
-
-titleAttr :: A.AttrName
-titleAttr = "title"
-
-borderMappings :: [(A.AttrName, V.Attr)]
-borderMappings =
-    [ (B.borderAttr,         V.yellow `on` V.black)
-    , (titleAttr,            fg V.cyan)
-    ]
-
-colorDemo :: Widget ()
-colorDemo =
-    updateAttrMap (A.applyAttrMappings borderMappings) $     -- é o mapa de atributos geral (retornado por updateAttrMap)
-    B.borderWithLabel (withAttr titleAttr $ str "title") $
-    hLimit 20 $
-    vLimit 3 $
-    C.center $
-    str $ "colors!"
-
-{-
-The default border style is Brick.Widgets.Border.Style.unicode. To change border styles, use the Brick.Widgets.Core.withBorderStyle combinator to wrap a widget and change the border style it uses when rendering. For example, this will use the ascii border style instead of unicode:
--}
 
 botaoNumero :: Integer -> Widget ()
 botaoNumero (-1) = 
@@ -107,15 +50,15 @@ botaoNumero numero =
     B.borderWithLabel (str "") $
     C.vCenter $
     C.center $
-    txt $ T.pack $ show numero
+    txt $ T.pack $ show numero 
+    -- show numero converte inteiro para String
 
 
 
 
 ui :: Widget ()
 ui =
---    hBox borderDemos
-    hBox [botaoNumero 1024, botaoNumero 4, botaoNumero (-1), botaoNumero (-1)]
+        hBox [botaoNumero 1024, botaoNumero 4, botaoNumero (-1), botaoNumero (-1)]
     <=> hBox [botaoNumero 1024, botaoNumero 4, botaoNumero (-1), botaoNumero (-1)]
     <=> hBox [botaoNumero 1024, botaoNumero 4, botaoNumero (-1), botaoNumero (-1)]
     <=> hBox [botaoNumero 1024, botaoNumero 4, botaoNumero (-1), botaoNumero (-1)]
