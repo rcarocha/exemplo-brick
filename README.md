@@ -1,2 +1,1 @@
-# exemplo-brick
-Exemplo de Uso da Biblioteca Haskell Brick
+# exemplo-brick-ui
